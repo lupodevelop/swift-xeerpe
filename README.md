@@ -6,6 +6,11 @@ Chainable visual effects for SwiftUI, drawn with Metal shaders. Effects take
 signals (time, pointer, tilt, a binding, the progress of an async job), so
 they move only when something they read changes.
 
+xeerpe started as a TypeScript library for CSS backgrounds by
+[Nicola Centonze](https://github.com/nicolacentonze): see
+[xeerpe](https://github.com/nicolacentonze/xeerpe) and
+[xeerpe.io](https://xeerpe.io). This package brings it to SwiftUI.
+
 ## Requirements
 
 - Xcode 26 (Swift 6.2) or newer
