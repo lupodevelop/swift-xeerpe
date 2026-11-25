@@ -11,6 +11,8 @@ concurrency:
 
 jobs:
   swift:
+    # Runs only once the repository is public: private runners are billed.
+    if: ${{ !github.event.repository.private }}
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v7
@@ -27,6 +29,8 @@ jobs:
           done
 
   site:
+    # Runs only once the repository is public: private runners are billed.
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     defaults:
       run:
