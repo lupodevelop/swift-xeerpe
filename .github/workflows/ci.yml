@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  swift:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test
+        run: swift test
+      - name: Generated API is up to date
+        run: python3 Tools/api/generate.py --check
+      - name: Scroll-frames tool
+        run: python3 -m unittest discover -s Tools/scroll-frames -p 'test_*.py'
+      - name: Build for iOS, tvOS, watchOS and visionOS
+        run: |
+          for platform in iOS tvOS watchOS visionOS; do
+            xcodebuild -scheme xeerpe -destination "generic/platform=$platform" -quiet build
+          done
+
+  site:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Site
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: Site/package-lock.json
+      - run: npm ci
+      - run: npm run build
