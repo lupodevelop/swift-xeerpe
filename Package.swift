@@ -1,32 +1,23 @@
-// swift-tools-version: 6.4
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version: 6.2
 
 import PackageDescription
 
 let package = Package(
     name: "xeerpe",
+    platforms: [
+        .iOS(.v17),
+        .macOS(.v14),
+        .tvOS(.v17),
+        .visionOS(.v26),
+        .watchOS(.v10),
+    ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
-            name: "xeerpe",
-            targets: ["xeerpe"]
-        ),
+        .library(name: "xeerpe", targets: ["xeerpe"]),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "xeerpe",
-            swiftSettings: [
-                .enableUpcomingFeature("ApproachableConcurrency"),
-            ],
-        ),
-        .testTarget(
-            name: "xeerpeTests",
-            dependencies: ["xeerpe"],
-            swiftSettings: [
-                .enableUpcomingFeature("ApproachableConcurrency"),
-            ],
-        ),
+        .target(name: "xeerpe", resources: [.process("Shaders")]),
+        .executableTarget(name: "xeerpe-preview", dependencies: ["xeerpe"], path: "Showcase", resources: [.process("Shaders")]),
+        .testTarget(name: "xeerpeTests", dependencies: ["xeerpe"]),
+        .testTarget(name: "ShowcaseTests", dependencies: ["xeerpe", "xeerpe-preview"]),
     ]
 )
