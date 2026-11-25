@@ -17,6 +17,8 @@ concurrency:
 
 jobs:
   build:
+    # Pages is not available for private repositories on free plans.
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     defaults:
       run:
