@@ -3,8 +3,11 @@ import SwiftUI
 /// Four colors for `liquid`, darkest-to-lightest is a good order. Built from
 /// any number of colors: extra ones are ignored, missing ones repeat.
 public struct XeerpePalette: ExpressibleByArrayLiteral {
+    /// Always four colors.
     public let colors: [Color]
 
+    /// A palette from `colors`: extra ones are ignored, missing ones repeat,
+    /// and an empty list gives grey.
     public init(_ colors: [Color]) {
         self.colors = (0..<4).map { colors.isEmpty ? Color.gray : colors[$0 % colors.count] }
     }

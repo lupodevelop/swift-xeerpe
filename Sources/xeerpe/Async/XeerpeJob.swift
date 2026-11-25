@@ -25,11 +25,13 @@ public enum XeerpePhase: String, Sendable, CaseIterable, Hashable {
 /// The work runs off the main actor; the job changes on the main actor.
 @MainActor @Observable
 public final class XeerpeJob<Value: Sendable> {
+    /// Where the job is now.
     public private(set) var phase: XeerpePhase = .idle
     /// The last value reported or returned. Kept when a later run fails.
     public private(set) var value: Value?
     /// 0...1: what the work reported, 1 when done.
     public private(set) var progress: Double = 0
+    /// The error of the last run, nil unless it failed.
     public private(set) var error: (any Error)?
     /// When the current phase began.
     public private(set) var phaseStart = Date()
@@ -44,7 +46,9 @@ public final class XeerpeJob<Value: Sendable> {
     /// partial value. The first report moves the job to `.streaming`.
     public struct Report: Sendable {
         let send: @Sendable (Double?, Value?) async -> Void
+        /// Reports `progress` (0...1) and, optionally, a partial value.
         public func callAsFunction(_ progress: Double, _ partial: Value? = nil) async { await send(progress, partial) }
+        /// Reports a partial value without changing the progress.
         public func callAsFunction(partial: Value) async { await send(nil, partial) }
     }
 

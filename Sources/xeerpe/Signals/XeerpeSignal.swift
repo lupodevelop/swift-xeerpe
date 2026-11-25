@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// The shape of a time signal over one period.
 public enum XeerpeWave: Sendable {
     /// Smooth back-and-forth between `from` and `to`.
     case sine
@@ -10,6 +11,8 @@ public enum XeerpeWave: Sendable {
 /// A typed source of a parameter value, resolved against the local context
 /// each time the view renders. Not an event bus: it holds no state.
 public struct XeerpeSignal<Value> {
+    /// The inputs the signal reads. An effect that uses the signal adds them
+    /// to its own.
     public let inputs: XeerpeInput
     let resolve: (XeerpeContext) -> Value
 
@@ -18,9 +21,12 @@ public struct XeerpeSignal<Value> {
         self.resolve = resolve
     }
 
+    /// The signal's value in `context`.
     @MainActor
     public func value(in context: XeerpeContext) -> Value { resolve(context) }
 
+    /// A signal that applies `transform` to this one's value. It reads the
+    /// same inputs.
     public func map<T>(_ transform: @escaping (Value) -> T) -> XeerpeSignal<T> {
         XeerpeSignal<T>(inputs: inputs) { transform(self.resolve($0)) }
     }
@@ -44,6 +50,7 @@ extension XeerpeSignal: ExpressibleByIntegerLiteral where Value == Double {
 }
 
 extension XeerpeSignal {
+    /// A signal that is always `v` and reads no input.
     public static func constant(_ v: Value) -> Self { .init { _ in v } }
 }
 
@@ -59,6 +66,7 @@ extension XeerpeValueConvertible where Self == XeerpeValue {
         .init(inputs: .hover) { $0.isHovering ? to : from }
     }
 
+    /// `from` while not pressed, `to` while pressed.
     public static func press(from: Double, to: Double) -> Self {
         .init(inputs: .press) { $0.isPressed ? to : from }
     }

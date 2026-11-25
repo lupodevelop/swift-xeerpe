@@ -16,18 +16,26 @@ import SwiftUI
 /// Each static preset also has a chained form, so it can be used on any
 /// line of a builder.
 public struct XeerpeChain: Sendable {
+    /// The effects in the order they are applied.
     public private(set) var effects: [XeerpeEffect]
 
+    /// A chain of `effects`, applied in that order.
     public init(_ effects: [XeerpeEffect] = []) { self.effects = effects }
+    /// A chain of the effects `build` lists, one per line.
     public init(@XeerpeBuilder _ build: () -> XeerpeChain) { self = build() }
 
+    /// This chain with `effect` added at the end.
     public func appending(_ effect: XeerpeEffect) -> XeerpeChain { XeerpeChain(effects + [effect]) }
+    /// This chain with the effects of `other` added at the end.
     public func appending(_ other: XeerpeChain) -> XeerpeChain { XeerpeChain(effects + other.effects) }
 
     /// A later effect claims a property an earlier effect already claimed.
     public struct Conflict: Hashable {
+        /// The property both effects claim.
         public let property: XeerpeProperty
+        /// Index in `effects` of the effect that claimed it first.
         public let first: Int
+        /// Index in `effects` of the later effect.
         public let second: Int
     }
 

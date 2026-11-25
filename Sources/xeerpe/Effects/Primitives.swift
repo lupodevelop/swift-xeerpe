@@ -1,11 +1,13 @@
 import SwiftUI
 
+/// A number signal: what most effect parameters take.
 public typealias XeerpeValue = XeerpeSignal<Double>
 
 /// Colors for the gradient primitive.
 public struct XeerpeGradient: Sendable {
     public var colors: [Color]
     public init(colors: [Color]) { self.colors = colors }
+    /// Indigo, purple and teal.
     public static var aurora: XeerpeGradient { XeerpeGradient(colors: [.indigo, .purple, .teal]) }
 }
 

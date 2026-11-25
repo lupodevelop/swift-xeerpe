@@ -6,9 +6,13 @@ import Foundation
 public struct XeerpeInput: OptionSet, Sendable, Hashable {
     public let rawValue: Int
     public init(rawValue: Int) { self.rawValue = rawValue }
+    /// The clock. Frames run while an effect reads it.
     public static let time = XeerpeInput(rawValue: 1 << 0)
+    /// Whether the pointer is over the view.
     public static let hover = XeerpeInput(rawValue: 1 << 1)
+    /// Whether the view is being pressed.
     public static let press = XeerpeInput(rawValue: 1 << 2)
+    /// Whether the view has focus.
     public static let focus = XeerpeInput(rawValue: 1 << 3)
     /// Continuous pointer position inside the view (where the platform has a pointer).
     public static let pointer = XeerpeInput(rawValue: 1 << 4)
@@ -27,19 +31,26 @@ public struct XeerpeInput: OptionSet, Sendable, Hashable {
 
 /// Where and when the view was last tapped; `time` is on the same clock as `XeerpeContext.time`.
 public struct XeerpeTap: Sendable, Equatable {
+    /// Where the view was tapped, in its own coordinates.
     public var location: CGPoint
+    /// When the view was tapped.
     public var time: TimeInterval
     public init(location: CGPoint, time: TimeInterval) { self.location = location; self.time = time }
 }
 
 /// Snapshot of local state handed to every effect at render time.
 public struct XeerpeContext: Sendable {
+    /// Seconds on the chain's clock.
     public var time: TimeInterval
+    /// Whether the pointer is over the view.
     public var isHovering: Bool
+    /// Whether the view is being pressed.
     public var isPressed: Bool
+    /// Whether the view has focus.
     public var isFocused: Bool
     /// Pointer position in the view's own coordinates, nil when it is outside.
     public var pointer: CGPoint?
+    /// The last tap, nil before the first.
     public var tap: XeerpeTap?
     /// The view's size in points.
     public var size: CGSize
@@ -55,12 +66,14 @@ public struct XeerpeContext: Sendable {
     /// 0 when nothing is on the view, 1 while the pointer hovers or a finger
     /// touches; it eases between the two.
     public var presence: Double
+    /// With Reduce Motion on, moving effects hold still or move less.
     public var reduceMotion: Bool
     /// With Reduce Transparency on, effects that lay translucent or blurred
     /// light over the content draw it opaque or not at all: privacy covers
     /// the view, a blur sweep dims instead of blurring, edge glow keeps only
     /// its line, and bloom and glare are off.
     public var reduceTransparency: Bool
+    /// Whether Increase Contrast is on.
     public var increasedContrast: Bool
     /// True while the scene is inactive or in the background.
     public var isInactive = false

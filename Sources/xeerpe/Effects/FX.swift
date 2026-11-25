@@ -159,6 +159,8 @@ extension XeerpeEffect {
 
 /// The genie as a removal and insertion transition.
 public struct XeerpeGenieTransition: Transition {
+    /// Where the view pours into: a point on its bottom edge, or the top
+    /// edge for a point in the top half. Only `x` picks the spot.
     public var target: UnitPoint
     public init(to target: UnitPoint = .bottom) { self.target = target }
 
@@ -168,6 +170,8 @@ public struct XeerpeGenieTransition: Transition {
 }
 
 extension Transition where Self == XeerpeGenieTransition {
+    /// A transition that pours the view into `target` on removal and out of
+    /// it on insertion.
     public static func xeerpeGenie(to target: UnitPoint = .bottom) -> XeerpeGenieTransition { XeerpeGenieTransition(to: target) }
 }
 
@@ -176,12 +180,16 @@ extension Transition where Self == XeerpeGenieTransition {
 /// `withAnimation`.
 @available(iOS 18, macOS 15, tvOS 18, watchOS 11, visionOS 2, *)
 public struct XeerpeTextRise: TextRenderer, Animatable {
+    /// What arrives one after another.
     public enum Unit: Sendable { case line, glyph }
+    /// 0 shows nothing, 1 shows all the text in place.
     public var progress: Double
     public var unit: Unit
     /// How many items arrive at once, in item-steps.
     public var spread: Double
+    /// Blur radius, in points, of an item that has not started to arrive.
     public var blur: Double
+    /// How far below its place, in points, an item starts.
     public var rise: Double
 
     public init(progress: Double, by unit: Unit = .line, spread: Double = 2, blur: Double = 6, rise: Double = 10) {

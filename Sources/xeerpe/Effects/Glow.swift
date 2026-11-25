@@ -8,7 +8,9 @@ public enum XeerpeGlow {
         Color(red: 0.55, green: 0.62, blue: 1.0), Color(red: 1.0, green: 0.40, blue: 0.47),
         Color(red: 1.0, green: 0.73, blue: 0.44), Color(red: 0.78, green: 0.53, blue: 1.0),
     ]
+    /// Cyan, white and blue.
     public static let ice: [Color] = [.cyan, .white, .blue, Color(red: 0.5, green: 0.9, blue: 1)]
+    /// Orange, red, yellow and pink.
     public static let ember: [Color] = [.orange, .red, .yellow, Color(red: 1, green: 0.3, blue: 0.5)]
 }
 

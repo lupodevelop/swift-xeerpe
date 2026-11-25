@@ -12,7 +12,9 @@ extension XeerpeSignal where Value == CGPoint {
     /// Finger or pointer position from the center; zero when untouched.
     public static var touch: XeerpeVector { .init(inputs: .touch) { $0.touch ?? .zero } }
 
+    /// The horizontal component.
     public var x: XeerpeValue { map { Double($0.x) } }
+    /// The vertical component, growing downward.
     public var y: XeerpeValue { map { Double($0.y) } }
     /// Distance from the center, 0...1.
     public var length: XeerpeValue { map { Swift.min(Double(hypot($0.x, $0.y)), 1) } }

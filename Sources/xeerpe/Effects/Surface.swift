@@ -1,7 +1,10 @@
 import SwiftUI
 
+/// The variant of Liquid Glass for `glass`.
 public enum XeerpeGlass: Sendable {
+    /// The system's regular Liquid Glass.
     case regular
+    /// The system's clear Liquid Glass, more transparent than regular.
     case clear
 }
 

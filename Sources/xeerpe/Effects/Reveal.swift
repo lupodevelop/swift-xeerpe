@@ -28,6 +28,7 @@ public struct XeerpeReveal: Sendable {
         XeerpeReveal(mode: .fluid, angle: 0, origin: origin, softness: softness, turbulence: turbulence)
     }
 
+    /// A fluid iris from the center with the default settings.
     public static var fluid: XeerpeReveal { fluid() }
 
     /// A wipe that breaks into grains: each grain crosses the edge at its own
@@ -85,7 +86,9 @@ extension XeerpeEffect {
 /// Reveal as a SwiftUI insertion and removal transition, fully shown at the
 /// identity phase. SwiftUI drives the phases; there is no coordinator.
 public struct XeerpeTransition: Transition {
+    /// How the content appears.
     public var style: XeerpeReveal
+    /// The color of the light along the edge.
     public var glow: Color
     public init(style: XeerpeReveal = .fluid, glow: Color = .white) { self.style = style; self.glow = glow }
 
@@ -95,6 +98,7 @@ public struct XeerpeTransition: Transition {
 }
 
 extension Transition where Self == XeerpeTransition {
+    /// A transition that reveals the view with `style`, with `glow` along the edge.
     public static func xeerpe(_ style: XeerpeReveal = .fluid, glow: Color = .white) -> XeerpeTransition {
         XeerpeTransition(style: style, glow: glow)
     }

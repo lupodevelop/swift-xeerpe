@@ -4,6 +4,7 @@ import SwiftUI
 /// ellipse), about 4 a squircle, large values a rectangle. Animatable, so a
 /// changing exponent morphs the outline continuously. Clamped to 0.5...24.
 public struct Superellipse: Shape {
+    /// The `n` of the curve; see the type's description.
     public var exponent: Double
     public init(exponent: Double) { self.exponent = exponent }
 
@@ -33,6 +34,7 @@ public struct Superellipse: Shape {
 public typealias XeerpeShapeSignal = XeerpeSignal<AnyShape>
 
 extension XeerpeSignal where Value == AnyShape {
+    /// A superellipse whose exponent follows `exponent`.
     public static func superellipse(_ exponent: XeerpeValue) -> XeerpeShapeSignal {
         .init(inputs: exponent.inputs) { AnyShape(Superellipse(exponent: exponent.resolve($0))) }
     }

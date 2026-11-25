@@ -84,11 +84,15 @@ extension XeerpeEffect {
 /// Chain forms of `shader`, written by hand because the effect exists only
 /// where shaders do.
 extension XeerpeChain {
+    /// A chain that starts with your own Metal shader. See
+    /// `XeerpeEffect.shader(_:slot:claims:inputs:_:)`.
     public static func shader(_ name: String, slot: XeerpeSlot = .content, claims: Set<XeerpeProperty> = [], inputs: XeerpeInput = [],
                               _ make: @escaping @MainActor (XeerpeContext) -> XeerpeShaderPass?) -> XeerpeChain {
         XeerpeChain([XeerpeEffect.shader(name, slot: slot, claims: claims, inputs: inputs, make)])
     }
 
+    /// Appends your own Metal shader. See
+    /// `XeerpeEffect.shader(_:slot:claims:inputs:_:)`.
     public func shader(_ name: String, slot: XeerpeSlot = .content, claims: Set<XeerpeProperty> = [], inputs: XeerpeInput = [],
                        _ make: @escaping @MainActor (XeerpeContext) -> XeerpeShaderPass?) -> XeerpeChain {
         appending(XeerpeEffect.shader(name, slot: slot, claims: claims, inputs: inputs, make))

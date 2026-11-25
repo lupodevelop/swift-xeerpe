@@ -16,13 +16,19 @@ import SwiftUI
 /// when needed, and give it a `claims` property so `without` and
 /// `replacing` can find it.
 public struct XeerpeEffect: @unchecked Sendable {
+    /// The effect's name, such as `"glow"`.
     public let name: String
+    /// Where the effect acts on the view.
     public let slot: XeerpeSlot
+    /// The properties the effect owns; `without` and `replacing` find it by them.
     public let claims: Set<XeerpeProperty>
     /// Inputs the effect reads; the chain wires up only these.
     public let inputs: XeerpeInput
     let render: @MainActor (AnyView, XeerpeContext) -> AnyView
 
+    /// An effect that wraps any SwiftUI modifier. `render` receives the view
+    /// built by the earlier effects and the current context, and returns the
+    /// new view.
     public init(
         name: String,
         slot: XeerpeSlot,

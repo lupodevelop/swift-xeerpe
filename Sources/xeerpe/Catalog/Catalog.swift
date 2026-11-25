@@ -1,21 +1,27 @@
 import SwiftUI
 
+/// A group of presets in the catalog.
 public enum XeerpeCategory: String, CaseIterable, Sendable, Identifiable {
     case metals, gems, food, nature, sky, space, neon, pastel, neutral, luxury, textures, moods, motion
     /// Presets drawn by Metal shaders.
     case liquid
     public var id: String { rawValue }
+    /// The name with a capital initial, for display.
     public var title: String { rawValue.prefix(1).uppercased() + rawValue.dropFirst() }
 }
 
 /// A named surface. Data presets list their layers; shader presets build a style.
 public struct XeerpePreset: Identifiable {
+    /// The preset's name, as `XeerpeCatalog[id:]` finds it.
     public let id: String
     public let category: XeerpeCategory
+    /// The layers of a data preset; empty for a shader preset.
     public let layers: [XeerpeLayer]
+    /// The slow movement of a data preset; empty for a shader preset.
     public let motion: [XeerpeMotion]
     private let make: ((AnyShape, XeerpeVector?) -> XeerpeChain)?
 
+    /// A data preset drawn from `layers`, moving by `motion`.
     public init(_ id: String, _ category: XeerpeCategory, layers: [XeerpeLayer], motion: [XeerpeMotion] = []) {
         self.id = id; self.category = category; self.layers = layers; self.motion = motion; self.make = nil
     }
@@ -48,12 +54,15 @@ public struct XeerpePreset: Identifiable {
     }
 }
 
+/// Every preset that ships with xeerpe.
 public enum XeerpeCatalog {
     /// Presets are immutable values; the shader ones hold style builders that are only called on the main actor.
     nonisolated(unsafe) public static let all: [XeerpePreset] = XeerpeCatalog.generated + XeerpeCatalog.shaderPresets
 
+    /// The presets in `category`, in catalog order.
     public static func presets(in category: XeerpeCategory) -> [XeerpePreset] { all.filter { $0.category == category } }
 
+    /// The preset named `id`, or nil.
     public static subscript(id: String) -> XeerpePreset? { all.first { $0.id == id } }
 
     /// Matches the id and the category; an empty query returns everything.

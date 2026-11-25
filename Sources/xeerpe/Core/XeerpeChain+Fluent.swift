@@ -12,9 +12,11 @@ import SwiftUI
 extension XeerpeChain {
     /// Appends an effect of your own, or any `XeerpeEffect` value.
     public func then(_ effect: XeerpeEffect) -> XeerpeChain { appending(effect) }
+    /// A chain that starts with `effect`.
     public static func then(_ effect: XeerpeEffect) -> XeerpeChain { XeerpeChain([effect]) }
 
     /// Appends a whole chain: a preset kept in a variable, or one built elsewhere.
     public func then(_ chain: XeerpeChain) -> XeerpeChain { appending(chain) }
+    /// `chain` itself, so a builder line can start with it.
     public static func then(_ chain: XeerpeChain) -> XeerpeChain { chain }
 }

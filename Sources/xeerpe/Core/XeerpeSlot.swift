@@ -4,10 +4,15 @@ import os
 
 /// Where an effect acts on the view it decorates.
 public enum XeerpeSlot: Sendable, Hashable, CaseIterable {
+    /// The content's own pixels: color, filters, texture.
     case content
+    /// Behind the content.
     case background
+    /// Over the content.
     case overlay
+    /// What part of the content shows.
     case mask
+    /// The content's shape on screen: scale, rotation, distortion.
     case geometry
 }
 

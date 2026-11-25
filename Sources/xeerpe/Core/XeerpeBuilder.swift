@@ -1,3 +1,5 @@
+/// Builds a chain from effects listed one per line. `if`, `if`-`else`,
+/// `switch` and `for` work as in a view builder.
 @resultBuilder
 public enum XeerpeBuilder {
     public static func buildExpression(_ c: XeerpeChain) -> XeerpeChain { c }

@@ -241,6 +241,10 @@ extension View {
     public func xeerpe(@XeerpeBuilder _ build: () -> XeerpeChain) -> some View {
         modifier(XeerpeModifier(chain: build()))
     }
+
+    /// Applies `chain` to the view.
+    ///
+    ///     photo.xeerpe(.film().without(.lightLeak))
     public func xeerpe(_ chain: XeerpeChain) -> some View {
         modifier(XeerpeModifier(chain: chain))
     }

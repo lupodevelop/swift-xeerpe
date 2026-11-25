@@ -4,6 +4,7 @@ import SwiftUI
 public struct XeerpeStop: Sendable, Hashable {
     public var rgba: UInt32
     public var at: Double
+    /// A stop of color `rgba` (0xRRGGBBAA) at `at` (0...1).
     public init(_ rgba: UInt32, _ at: Double) { self.rgba = rgba; self.at = at }
 }
 

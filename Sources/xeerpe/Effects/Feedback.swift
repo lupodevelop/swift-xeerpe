@@ -20,7 +20,9 @@ extension Xeerpe {
 /// When a feedback fires: each time `signal` changes, or with `risingOnly`
 /// only when it goes up (a press, not its release).
 public struct XeerpeTrigger: Sendable {
+    /// The count the trigger watches.
     public let signal: XeerpeSignal<Int>
+    /// Whether only increases fire.
     public let risingOnly: Bool
 
     public init(_ signal: XeerpeSignal<Int>, risingOnly: Bool = false) {
