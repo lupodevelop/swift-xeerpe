@@ -29,7 +29,9 @@ import Testing
         for _ in 0..<50 {
             let r = UInt32.random(in: 0...255), g = UInt32.random(in: 0...255), b = UInt32.random(in: 0...255), a = UInt32.random(in: 0...255)
             let c = Xeerpe.channels(rgba: r << 24 | g << 16 | b << 8 | a)
-            #expect([c.r, c.g, c.b, c.a] == [Double(r) / 255, Double(g) / 255, Double(b) / 255, Double(a) / 255])
+            let decoded: [Double] = [c.r, c.g, c.b, c.a]
+            let expected: [Double] = [r, g, b, a].map { Double($0) / 255 }
+            #expect(decoded == expected)
         }
     }
 

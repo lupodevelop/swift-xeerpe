@@ -198,13 +198,13 @@ public struct XeerpeTextRise: TextRenderer, Animatable {
         case .line:
             let lines = Array(layout)
             for (i, line) in lines.enumerated() {
-                var c = place(i, of: lines.count, in: ctx)
+                let c = place(i, of: lines.count, in: ctx)
                 c.draw(line)
             }
         case .glyph:
             let slices = layout.flatMap { $0 }.flatMap { $0 }
             for (i, slice) in slices.enumerated() {
-                var c = place(i, of: slices.count, in: ctx)
+                let c = place(i, of: slices.count, in: ctx)
                 c.draw(slice)
             }
         }
