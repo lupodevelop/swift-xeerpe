@@ -1,0 +1,145 @@
+---
+// A stage pinned to the viewport while its section scrolls past. Scroll
+// progress (0...1) picks the frame of the scene, when there is one, and is
+// exposed to CSS as --p. Slots "top" and "bottom" sit above and below the
+// frame; default children cover the stage. Any element with
+// data-at="0.4" fades in around that progress and out before the next one.
+import { sceneInfo } from "../data/scenes";
+
+interface Props { scene?: Parameters<typeof sceneInfo>[0]; length?: number; label?: string }
+const { scene, length = 320, label } = Astro.props;
+const info = scene && sceneInfo(scene);
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+---
+<section class="scrub" style={`height: ${length}vh`} data-src={info && `${base}frames/${scene}/`} data-frames={info?.frames}>
+  <div class="stage">
+    <div class="top"><slot name="top" /></div>
+    <div class="middle">
+      {info && (
+        <div class="frame" style={`--ratio: ${info.width / info.height}`}>
+          <canvas width={info.width} height={info.height} role="img" aria-label={label}></canvas>
+          <img class="still" src={`${base}frames/${scene}/${String(Math.ceil(info.frames / 2)).padStart(4, "0")}.webp`} alt="" width={info.width} height={info.height} />
+        </div>
+      )}
+    </div>
+    <div class="bottom"><slot name="bottom" /></div>
+    <div class="overlay"><slot /></div>
+    <div class="meter" aria-hidden="true"><span></span></div>
+  </div>
+</section>
+
+<script>
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const name = (i: number) => String(i + 1).padStart(4, "0") + ".webp";
+
+  for (const section of document.querySelectorAll<HTMLElement>(".scrub")) {
+    const canvas = section.querySelector("canvas");
+    const ctx = canvas?.getContext("2d");
+    const meter = section.querySelector<HTMLElement>(".meter span")!;
+    const notes = [...section.querySelectorAll<HTMLElement>("[data-at]")];
+    const stops = notes.map((n) => Number(n.dataset.at));
+    const count = Number(section.dataset.frames ?? 0);
+    const images: HTMLImageElement[] = [];
+    let shown = -1;
+    let queued = false;
+
+    if (still) {
+      section.classList.add("is-still");
+      section.style.setProperty("--p", "0.5");
+      notes.forEach((n) => n.classList.add("on"));
+      continue;
+    }
+
+    const request = () => { if (!queued) { queued = true; requestAnimationFrame(draw); } };
+
+    const load = () => {
+      if (images.length || !count) return;
+      for (let i = 0; i < count; i++) {
+        const img = new Image();
+        img.decoding = "async";
+        img.src = section.dataset.src + name(i);
+        img.onload = request;
+        images.push(img);
+      }
+    };
+
+    // The nearest decoded frame, so a fast scroll never shows a blank canvas.
+    const nearest = (i: number) => {
+      for (let d = 0; d < count; d++) {
+        for (const j of [i - d, i + d]) if (images[j]?.complete && images[j].naturalWidth) return j;
+      }
+      return -1;
+    };
+
+    const progress = () => {
+      const r = section.getBoundingClientRect();
+      return Math.min(Math.max(-r.top / (r.height - innerHeight), 0), 1);
+    };
+
+    function draw() {
+      queued = false;
+      const p = progress();
+      section.style.setProperty("--p", p.toFixed(4));
+      if (canvas && ctx) {
+        const j = nearest(Math.round(p * (count - 1)));
+        if (j >= 0 && j !== shown) { ctx.drawImage(images[j], 0, 0, canvas.width, canvas.height); shown = j; }
+      }
+      meter.style.transform = `scaleX(${p})`;
+      // Each note owns the span from halfway after the previous stop to halfway before the next.
+      notes.forEach((n, k) => {
+        const from = k === 0 ? stops[k] - 0.2 : (stops[k - 1] + stops[k]) / 2;
+        const to = k === stops.length - 1 ? 1.01 : (stops[k] + stops[k + 1]) / 2;
+        n.classList.toggle("on", p >= from && p < to);
+      });
+    }
+
+    new IntersectionObserver((e) => { if (e[0].isIntersecting) { load(); request(); } }, { rootMargin: "100% 0px" }).observe(section);
+    addEventListener("scroll", request, { passive: true });
+    addEventListener("resize", request);
+  }
+</script>
+
+<style>
+  .scrub { position: relative; --p: 0; }
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: clamp(16px, 3vh, 32px);
+    padding: 84px var(--gutter) 64px;
+    background: var(--bg);
+  }
+  .top:empty, .bottom:empty { display: none; }
+  /* The middle row is a size container: the frame keeps the scene's own
+     proportions and takes the largest size that fits it, so nothing is
+     cut and nothing is padded with bands. */
+  .middle { container-type: size; display: grid; place-items: center; min-height: 0; }
+  .frame {
+    position: relative;
+    width: min(100cqw, 100cqh * var(--ratio));
+    aspect-ratio: var(--ratio);
+    border-radius: clamp(14px, 2vw, 28px);
+    overflow: hidden;
+    box-shadow: 0 40px 120px -40px rgb(0 0 0 / 0.8), 0 0 0 1px rgb(255 255 255 / 0.06);
+  }
+  canvas, .still { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .still { display: none; }
+  .is-still canvas { display: none; }
+  .is-still .still { display: block; }
+  .overlay { position: absolute; inset: 0; pointer-events: none; }
+  .overlay :global(*) { pointer-events: auto; }
+  .meter {
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: 28px;
+    height: 2px;
+    background: rgb(255 255 255 / 0.12);
+  }
+  .meter span { display: block; height: 100%; background: var(--text); transform-origin: left; transform: scaleX(0); }
+  .is-still .meter { display: none; }
+</style>

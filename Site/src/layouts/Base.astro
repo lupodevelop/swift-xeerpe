@@ -1,0 +1,73 @@
+---
+import "../styles/global.css";
+
+interface Props { title: string; description: string }
+const { title, description } = Astro.props;
+const repo = import.meta.env.PUBLIC_REPO_URL as string | undefined;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#050508" />
+    <link rel="icon" href={`${base}favicon.png`} type="image/png" />
+    <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Nunito:wght@800;900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class="bar">
+      <a class="mark" href="#top"><img src={`${base}logos/xeerpe-swift.png`} alt="" width="26" height="26" />xeerpe</a>
+      <nav>
+        {repo && <a href={repo}>Source</a>}
+        <a href="#start">Get started</a>
+      </nav>
+    </header>
+    <main id="top"><slot /></main>
+    <footer class="foot">
+      <span>xeerpe. Effects for SwiftUI, drawn by Metal.</span>
+      <span>Catalog colors derive from the xeerpe TypeScript library by Nicola Centonze (MIT).</span>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .bar {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px var(--gutter);
+    color: var(--text);
+    /* A translucent bar, so lines and scenes pass under it instead of
+       through the text. Solid where transparency is reduced. */
+    background: rgb(5 5 8 / 0.72);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--line);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .bar { background: var(--bg); backdrop-filter: none; }
+  }
+  .mark { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; letter-spacing: -0.03em; text-decoration: none; }
+  .mark img { width: 26px; height: 26px; }
+  nav { display: flex; gap: 28px; font: 500 13px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+  nav a { text-decoration: none; opacity: 0.85; }
+  nav a:hover { opacity: 1; }
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 32px var(--gutter) 40px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--muted);
+  }
+</style>

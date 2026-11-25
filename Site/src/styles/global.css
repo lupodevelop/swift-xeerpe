@@ -1,0 +1,61 @@
+:root {
+  --bg: #050508; /* the scenes' background, so frame edges disappear */
+  --surface: #111116;
+  --line: rgb(255 255 255 / 0.1);
+  --text: #ecebe6;
+  --muted: #8b8b94;
+  --accent: #5ef2ff;
+  --gutter: clamp(16px, 5vw, 72px);
+  --sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --display: "Archivo", "Instrument Sans", ui-sans-serif, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  font: 18px/1.55 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+body { margin: 0; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+a { color: inherit; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+h1, h2, h3 { margin: 0; font-family: var(--display); font-weight: 700; font-stretch: 108%; }
+
+/* Large type tightens as it grows. */
+.display { font-size: clamp(56px, 11vw, 168px); line-height: 0.92; letter-spacing: -0.045em; }
+.title { font-size: clamp(40px, 6.5vw, 96px); line-height: 0.98; letter-spacing: -0.035em; }
+.subtitle { font-size: clamp(24px, 3vw, 36px); line-height: 1.15; letter-spacing: -0.02em; }
+.kicker { font: 500 13px/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+
+.code {
+  margin: 0;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgb(17 17 22 / 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  font: 14px/1.6 var(--mono);
+  color: var(--text);
+  overflow-x: auto;
+  white-space: pre;
+}
+.code .api { color: var(--accent); }
+
+.block { padding: clamp(96px, 14vw, 200px) var(--gutter); }
+
+/* Captions inside a scrubbed scene: in and out with the scroll. */
+[data-at] { opacity: 0; transform: translateY(16px); transition: opacity 500ms var(--ease), transform 500ms var(--ease); }
+[data-at].on { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-at] { transform: none; transition: none; }
+}
