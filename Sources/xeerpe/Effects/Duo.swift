@@ -39,7 +39,13 @@ struct XeerpeDuoView: View, Animatable {
             XeerpeShaders.library.xeerpeDuo(.boundingRect, .float(Float(p)), .float(Float(edge.rawValue)), .float(Float(max(maxBlur, 0)))),
             maxSampleOffset: CGSize(width: maxBlur, height: maxBlur))
         #endif
+        #if os(visionOS)
+        // visionOS turns the view in real depth: there is no perspective to set.
+        return shaded.rotation3DEffect(.degrees(sign * fold * motion), axis: RotationAxis3D(x: axis.x, y: axis.y, z: axis.z),
+                                       anchor: UnitPoint3D(x: anchor.x, y: anchor.y, z: 0))
+        #else
         return shaded.rotation3DEffect(.degrees(sign * fold * motion), axis: axis, anchor: anchor, perspective: 0.55)
+        #endif
     }
 }
 

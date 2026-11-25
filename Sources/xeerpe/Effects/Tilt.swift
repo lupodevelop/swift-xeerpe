@@ -13,12 +13,18 @@ extension Xeerpe {
 }
 
 extension XeerpeEffect {
-    /// Turns the view in 3D following `vector`, up to `angle` degrees.
+    /// Turns the view in 3D following `vector`, up to `angle` degrees. On
+    /// visionOS the turn is in real depth and `perspective` is ignored.
     public static func tilt3D(_ vector: XeerpeVector = .tilt, angle: Double = 14, perspective: Double = 0.5) -> XeerpeEffect {
         XeerpeEffect(name: "tilt3D", slot: .geometry, claims: [.rotation], inputs: vector.inputs) { view, ctx in
             let t = Xeerpe.tiltRotation(ctx.reduceMotion ? .zero : vector.value(in: ctx), angle: angle)
+            #if os(visionOS)
+            // visionOS turns the view in real depth, so `perspective` has no effect there.
+            return AnyView(view.rotation3DEffect(.degrees(t.degrees), axis: RotationAxis3D(x: t.axis.x, y: t.axis.y, z: 0)))
+            #else
             return AnyView(view.rotation3DEffect(.degrees(t.degrees), axis: (x: t.axis.x, y: t.axis.y, z: 0),
                                                  perspective: Xeerpe.clampUnit(perspective)))
+            #endif
         }
     }
 

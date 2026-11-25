@@ -647,9 +647,11 @@ extension XeerpeChain {
     /// a template image or an asset-catalog SVG takes the gradient as its
     /// color. Transparent areas stay transparent. Renders the content twice.
     public func fill(_ g: XeerpeGradient, angle: some XeerpeValueConvertible = 45) -> XeerpeChain { appending(XeerpeEffect.fill(g, angle: angle.xeerpeValue)) }
-    /// Turns the view in 3D following `vector`, up to `angle` degrees.
+    /// Turns the view in 3D following `vector`, up to `angle` degrees. On
+    /// visionOS the turn is in real depth and `perspective` is ignored.
     public static func tilt3D(_ vector: XeerpeVector = .tilt, angle: Double = 14, perspective: Double = 0.5) -> XeerpeChain { XeerpeChain([XeerpeEffect.tilt3D(vector, angle: angle, perspective: perspective)]) }
-    /// Turns the view in 3D following `vector`, up to `angle` degrees.
+    /// Turns the view in 3D following `vector`, up to `angle` degrees. On
+    /// visionOS the turn is in real depth and `perspective` is ignored.
     public func tilt3D(_ vector: XeerpeVector = .tilt, angle: Double = 14, perspective: Double = 0.5) -> XeerpeChain { appending(XeerpeEffect.tilt3D(vector, angle: angle, perspective: perspective)) }
     /// A soft light on the view that slides with `vector`, as on a glossy
     /// card turned under a lamp. Clipped to `shape`; takes no touches. Off

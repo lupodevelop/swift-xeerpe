@@ -24,8 +24,9 @@ static float xsweep(float2 u, float angle) {
 }
 
 // Whether `p` lies inside the view's rect. Only geometry: the layer is
-// never passed to a helper (see the blur macro below).
-static bool xinside(float2 p, float4 bounds) { return all(p >= bounds.xy) && all(p < bounds.xy + bounds.zw); }
+// never passed to a helper (see the blur macro below). Unused on watchOS,
+// where the shaders that call it are compiled out.
+__attribute__((unused)) static bool xinside(float2 p, float4 bounds) { return all(p >= bounds.xy) && all(p < bounds.xy + bounds.zw); }
 
 static float xfbm(float2 p) {
     float v = 0.0, a = 0.5;
