@@ -9,7 +9,8 @@ import vision from "@tabler/icons/outline/device-vision-pro.svg?raw";
 import watch from "@tabler/icons/outline/device-watch.svg?raw";
 import Scrub from "../components/Scrub.astro";
 import { chapters } from "../data/scenes";
-import { textFill, metalFill } from "../data/fill";
+import { textFill, metalFill, surface } from "../data/fill";
+import "xeerpe/animations.css";
 
 const repo = import.meta.env.PUBLIC_REPO_URL as string | undefined;
 // Every effect family, by what it does. The names are checked against the
@@ -79,13 +80,17 @@ gold |> xeerpe.grain(xeerpe.grain_options) |> xeerpe.to_style`,
     links: [["Hex", "https://hex.pm/packages/xeerpe"], ["Docs", "https://xeerpe.hexdocs.pm/"]] as [string, string][],
   },
 ];
+// Each device lights its screen with a preset of the xeerpe npm library on
+// hover. The screen is the icon's longest outline, used as a clip path.
+const screenOf = (svg: string) =>
+  [...svg.matchAll(/ d="([^"]+)"/g)].map((m) => m[1]).filter((d) => !d.startsWith("M0 0h24")).sort((a, b) => b.length - a.length)[0];
 const platforms = [
-  { device: "iPhone and iPad", os: "iOS 17", icon: iphone },
-  { device: "Mac", os: "macOS 14", icon: mac },
-  { device: "Apple TV", os: "tvOS 17", icon: tv },
-  { device: "Apple Vision Pro", os: "visionOS 26", icon: vision },
-  { device: "Apple Watch", os: "watchOS 10", icon: watch },
-];
+  { device: "iPhone and iPad", os: "iOS 17", icon: iphone, preset: "aurora-dream" },
+  { device: "Mac", os: "macOS 14", icon: mac, preset: "ocean-drift" },
+  { device: "Apple TV", os: "tvOS 17", icon: tv, preset: "northern-lights" },
+  { device: "Apple Vision Pro", os: "visionOS 26", icon: vision, preset: "breathing-nebula" },
+  { device: "Apple Watch", os: "watchOS 10", icon: watch, preset: "molten-gold" },
+].map((p) => ({ ...p, screen: `${surface(p.preset)}; clip-path: path('${screenOf(p.icon)}')` }));
 ---
 <Base title="xeerpe" description="Chainable effects for SwiftUI, drawn by Metal. Surfaces, reveals and cards that answer to touch, tilt and time.">
 
@@ -115,7 +120,10 @@ card.xeerpe(.card(.holographic, .tilt))`}</pre>
     <ul class="platforms" aria-label="Platforms">
       {platforms.map((p) => (
         <li>
-          <span class="platform-icon" aria-hidden="true" set:html={p.icon} />
+          <span class="platform-icon" aria-hidden="true">
+            <span class="platform-screen" style={p.screen} />
+            <Fragment set:html={p.icon} />
+          </span>
           <span class="platform-device">{p.device}</span>
           <span class="platform-os">{p.os} and later</span>
         </li>
@@ -268,11 +276,16 @@ card.xeerpe(.card(.holographic, .tilt))`}</pre>
   .platforms { list-style: none; padding: 48px 0 0; margin: 72px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 40px 16px; text-align: center; }
   .platforms li { display: grid; justify-items: center; gap: 6px; }
   .platform-icon { display: grid; place-items: center; width: 64px; height: 64px; margin-bottom: 12px; color: var(--text); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-  .platform-icon :global(svg) { width: 56px; height: 56px; stroke-width: 1.1; }
+  .platform-icon :global(svg) { width: 56px; height: 56px; stroke-width: 1.1; position: relative; }
+  /* The screen is drawn in the icon's 24-unit space and scaled to its 56px,
+     under the outline, so the stroke covers its edge. */
+  .platform-icon { position: relative; }
+  .platform-screen { position: absolute; left: 4px; top: 4px; width: 24px; height: 24px; transform: scale(calc(56 / 24)); transform-origin: 0 0; opacity: 0; animation-play-state: paused !important; transition: opacity 0.6s ease; }
+  .platforms li:hover .platform-screen { opacity: 1; animation-play-state: running !important; }
   .platforms li:hover .platform-icon { transform: translateY(-3px); }
   .platform-device { font: 500 17px/1.3 var(--sans); color: var(--text); }
   .platform-os { font: 14px/1.4 var(--sans); color: var(--muted); }
   @media (max-width: 760px) { .platforms { grid-template-columns: repeat(2, minmax(0, 1fr)); } .platforms li:last-child { grid-column: 1 / -1; } }
-  @media (prefers-reduced-motion: reduce) { .platform-icon { transition: none; } .platforms li:hover .platform-icon { transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .platform-icon { transition: none; } .platforms li:hover .platform-icon { transform: none; } .platform-screen, .platforms li:hover .platform-screen { animation: none !important; } }
   @media (max-width: 760px) { .start-grid { grid-template-columns: minmax(0, 1fr); } }
 </style>

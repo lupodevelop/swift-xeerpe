@@ -8,6 +8,9 @@ const css = (style: Record<string, string>) =>
 /** Inline CSS that fills text with a preset of the xeerpe npm library. */
 export const textFill = (preset: string) => css(new Preset(preset).toTextStyle());
 
+/** Inline CSS that paints a background with a preset of the xeerpe npm library. */
+export const surface = (preset: string) => css(new Preset(preset).toStyle());
+
 /** Brushed steel with one sharp band of light, three times as wide as the text so the band can travel across it. */
 export const metalFill = css(
   new Builder()
