@@ -16,8 +16,13 @@ jobs:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v7
+      # Xcode 26 installs the Metal compiler separately.
+      - name: Metal toolchain
+        run: xcrun metal --version >/dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
+      # xcodebuild compiles the Metal shaders; `swift test` on Xcode 26 only
+      # copies them, and every shader effect then draws nothing.
       - name: Test
-        run: swift test
+        run: xcodebuild test -scheme xeerpe-Package -destination platform=macOS -quiet
       - name: Generated API is up to date
         run: python3 Tools/api/generate.py --check
       - name: Scroll-frames tool
